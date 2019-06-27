@@ -20,9 +20,9 @@ var (
 	flagTable   = flag.String("table", "userflow", "AWS Dynamodb table name")
 
 	// mode and partition key
-	flagAdd = flag.Bool("add", false, "type addition mode")
-	//flagUpdate = flag.String("update", "", "type update mode")
-	//flagRm     = flag.String("rm", "", "type remove mode")
+	flagAdd = flag.Bool("add", false, "user addition mode")
+	flagSet = flag.Bool("set", false, "user update mode")
+	flagRm  = flag.Bool("rm", false, "user remove mode")
 
 	// sort key
 	flagUpdateDate = flag.String("createdate", now.Format(time.RFC3339), "item create date")
@@ -34,7 +34,7 @@ var (
 	flagJobcode      = flag.Int("jobcode", 0, "job code number")
 	flagBank         = flag.String("bank", "", "bank name")
 	flagBankAccount  = flag.String("bankaccount", "", "bank account number")
-	flagShareNum     = flag.Int64("sharenum", 0, "shares number")
+	flagSharesNum    = flag.Int64("sharenum", 0, "shares number")
 	flagCostHourly   = flag.Int64("costhourly", 0, "cost hourly")
 	flagCostWeekly   = flag.Int64("costweekly", 0, "cost weekly")
 	flagCostMonthly  = flag.Int64("costmonthly", 0, "cost monthly")
@@ -74,6 +74,16 @@ func main() {
 			fmt.Fprintf(os.Stderr, "%v\n", err)
 			os.Exit(1)
 		}
+	} else if *flagSet {
+		err := SetUser(*db)
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "%v\n", err)
+			os.Exit(1)
+		}
+	} else if *flagRm {
+		fmt.Println("remove user mode")
+	} else {
+		flag.Usage()
 	}
 
 }

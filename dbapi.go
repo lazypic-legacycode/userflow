@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"os"
+	"reflect"
 	"strings"
 
 	"github.com/aws/aws-sdk-go/aws"
@@ -111,7 +112,7 @@ func AddUser(db dynamodb.DynamoDB) error {
 		Jobcode:      *flagJobcode,
 		Bank:         *flagBank,
 		BankAccount:  *flagBankAccount,
-		SharesNum:    *flagShareNum,
+		SharesNum:    *flagSharesNum,
 		CostHourly:   *flagCostHourly,
 		CostWeekly:   *flagCostWeekly,
 		CostMonthly:  *flagCostMonthly,
@@ -126,6 +127,80 @@ func AddUser(db dynamodb.DynamoDB) error {
 		return err
 	}
 
+	data := &dynamodb.PutItemInput{
+		Item:      dynamodbJSON,
+		TableName: aws.String(*flagTable),
+	}
+	_, err = db.PutItem(data)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+// SetUser 는 유저자료구조를 수정하는 함수이다.
+func SetUser(db dynamodb.DynamoDB) error {
+	input := &dynamodb.GetItemInput{
+		TableName: aws.String(*flagTable),
+		Key: map[string]*dynamodb.AttributeValue{
+			partitionKey: {
+				S: aws.String(*flagEmail),
+			},
+		},
+	}
+	result, err := db.GetItem(input)
+	if err != nil {
+		return err
+	}
+	u := User{}
+	err = dynamodbattribute.UnmarshalMap(result.Item, &u)
+	if err != nil {
+		return err
+	}
+	if *flagNameKor != "" && u.NameKor != *flagNameKor {
+		u.NameKor = *flagNameKor
+	}
+	if *flagNameEng != "" && u.NameEng != *flagNameEng {
+		u.NameEng = *flagNameEng
+	}
+	if *flagJobcode != 0 && u.Jobcode != *flagJobcode {
+		u.Jobcode = *flagJobcode
+	}
+	if *flagBank != "" && u.Bank != *flagBank {
+		u.Bank = *flagBank
+	}
+	if *flagBankAccount != "" && u.BankAccount != *flagBankAccount {
+		u.BankAccount = *flagBankAccount
+	}
+	if *flagSharesNum != 0 && u.SharesNum != *flagSharesNum {
+		u.SharesNum = *flagSharesNum
+	}
+	if *flagCostHourly != 0 && u.CostHourly != *flagCostHourly {
+		u.CostHourly = *flagCostHourly
+	}
+	if *flagCostWeekly != 0 && u.CostWeekly != *flagCostWeekly {
+		u.CostWeekly = *flagCostWeekly
+	}
+	if *flagCostMonthly != 0 && u.CostMonthly != *flagCostMonthly {
+		u.CostMonthly = *flagCostMonthly
+	}
+	if *flagCostYearly != 0 && u.CostYearly != *flagCostYearly {
+		u.CostYearly = *flagCostYearly
+	}
+	if *flagMonetaryUnit != "KRW" && u.MonetaryUnit != *flagMonetaryUnit {
+		u.MonetaryUnit = *flagMonetaryUnit
+	}
+	if u.Working != *flagWorking {
+		u.Working = *flagWorking
+	}
+	if *flagProjects != "" && reflect.DeepEqual(u.Projects, strings.Split(*flagProjects, ",")) == false {
+		u.Projects = strings.Split(*flagProjects, ",")
+	}
+	u.UpdateDate = *flagUpdateDate
+	dynamodbJSON, err := dynamodbattribute.MarshalMap(u)
+	if err != nil {
+		return err
+	}
 	data := &dynamodb.PutItemInput{
 		Item:      dynamodbJSON,
 		TableName: aws.String(*flagTable),
