@@ -16,6 +16,12 @@ User 수정
 $ userflow -set -email woong@lazypic.org -projects circle,csi
 ```
 
+User 삭제
+
+```bash
+$ userflow -rm -email woong@lazypic.org
+```
+
 ### AWS DB권한 설정
 DB접근 권한이 있는 계정에 아래 권한을 부여한다.
 
