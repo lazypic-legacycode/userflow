@@ -11,6 +11,7 @@ import (
 	"github.com/aws/aws-sdk-go/aws/awserr"
 	"github.com/aws/aws-sdk-go/service/dynamodb"
 	"github.com/aws/aws-sdk-go/service/dynamodb/dynamodbattribute"
+	"github.com/aws/aws-sdk-go/service/dynamodb/expression"
 )
 
 const (
@@ -208,6 +209,69 @@ func SetUser(db dynamodb.DynamoDB) error {
 	_, err = db.PutItem(data)
 	if err != nil {
 		return err
+	}
+	return nil
+}
+
+// RmUser 는 유저자료구조를 사용자를 삭제하는 함수이다.
+func RmUser(db dynamodb.DynamoDB) error {
+	input := &dynamodb.DeleteItemInput{
+		TableName: aws.String(*flagTable),
+		Key: map[string]*dynamodb.AttributeValue{
+			partitionKey: {
+				S: aws.String(*flagEmail),
+			},
+		},
+	}
+	_, err := db.DeleteItem(input)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+// GetUsers 는 사용자를 가지고오는 함수이다.
+func GetUsers(db dynamodb.DynamoDB, word string) error {
+	proj := expression.NamesList(
+		expression.Name("Email"),
+		expression.Name("NameKor"),
+		expression.Name("NameEng"),
+		expression.Name("Jobcode"),
+		expression.Name("Bank"),
+		expression.Name("BankAccount"),
+		expression.Name("SharesNum"),
+		expression.Name("CostHourly"),
+		expression.Name("CostWeekly"),
+		expression.Name("CostMonthly"),
+		expression.Name("CostYearly"),
+		expression.Name("MonetaryUnit"),
+		expression.Name("Working"),
+		expression.Name("Projects"),
+	)
+	expr, err := expression.NewBuilder().WithProjection(proj).Build()
+	if err != nil {
+		return err
+	}
+	params := &dynamodb.ScanInput{
+		ExpressionAttributeNames:  expr.Names(),
+		ExpressionAttributeValues: expr.Values(),
+		FilterExpression:          expr.Filter(),
+		ProjectionExpression:      expr.Projection(),
+		TableName:                 aws.String(*flagTable),
+	}
+	result, err := db.Scan(params)
+	if err != nil {
+		return err
+	}
+	for _, i := range result.Items {
+		u := User{}
+		err = dynamodbattribute.UnmarshalMap(i, &u)
+		if err != nil {
+			return err
+		}
+		if strings.Contains(u.String(), *flagSearchword) {
+			fmt.Println(u)
+		}
 	}
 	return nil
 }

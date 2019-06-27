@@ -1,5 +1,10 @@
 package main
 
+import (
+	"fmt"
+	"strings"
+)
+
 // User 는 사용자 정보를 다루는 자료구조이다.
 type User struct {
 	Email        string   // Lazypic 이메일. partition key
@@ -29,3 +34,29 @@ type User struct {
 // 프로그래머: 940909
 // 개인과외,서비스: 940903
 // 자문,지도료,고문료: 940600
+
+func (u User) String() string {
+	return fmt.Sprintf(`
+ID: %s Working: %t
+Name: %s(%s)
+Shares: %d
+Jobcode: %d
+Bank: %s %s
+Cost: h:%d w:%d m:%d y:%d %s
+Projects: %s`,
+		u.Email,
+		u.Working,
+		u.NameKor,
+		u.NameEng,
+		u.SharesNum,
+		u.Jobcode,
+		u.Bank,
+		u.BankAccount,
+		u.CostHourly,
+		u.CostWeekly,
+		u.CostMonthly,
+		u.CostYearly,
+		u.MonetaryUnit,
+		strings.Join(u.Projects, ","),
+	)
+}

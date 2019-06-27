@@ -43,6 +43,7 @@ var (
 	flagMonetaryUnit = flag.String("monetaryunit", "KRW", "monetary unit")
 	flagWorking      = flag.Bool("working", false, "is working?")
 	flagProjects     = flag.String("projects", "", "projectname")
+	flagSearchword   = flag.String("searchword", "", "searchword")
 )
 
 func main() {
@@ -85,8 +86,16 @@ func main() {
 			os.Exit(1)
 		}
 	} else if *flagRm && *flagEmail != "" {
-		fmt.Println("remove user mode")
+		err := RmUser(*db)
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "%v\n", err)
+			os.Exit(1)
+		}
 	} else {
-		fmt.Println("print user list")
+		err := GetUsers(*db, *flagSearchword)
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "%v\n", err)
+			os.Exit(1)
+		}
 	}
 }
