@@ -23,6 +23,12 @@ User 삭제
 $ userflow -rm -email woong@lazypic.org
 ```
 
+User 검색
+
+```bash
+$ userflow -searchword [검색어]
+```
+
 ### AWS DB권한 설정
 DB접근 권한이 있는 계정에 아래 권한을 부여한다.
 
