@@ -20,7 +20,7 @@ var (
 	flagTable   = flag.String("table", "userflow", "AWS Dynamodb table name")
 
 	// mode and partition key
-	flagAdd = flag.String("add", "", "type addition mode")
+	flagAdd = flag.Bool("add", false, "type addition mode")
 	//flagUpdate = flag.String("update", "", "type update mode")
 	//flagRm     = flag.String("rm", "", "type remove mode")
 
@@ -67,6 +67,13 @@ func main() {
 		fmt.Println("Created table:", *flagTable)
 		fmt.Println("Please try again in one minute.")
 		os.Exit(0)
+	}
+	if *flagAdd {
+		err := AddUser(*db)
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "%v\n", err)
+			os.Exit(1)
+		}
 	}
 
 }

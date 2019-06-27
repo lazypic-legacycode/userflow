@@ -1,17 +1,19 @@
 package main
 
 import (
+	"errors"
 	"fmt"
 	"os"
+	"strings"
 
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/awserr"
 	"github.com/aws/aws-sdk-go/service/dynamodb"
+	"github.com/aws/aws-sdk-go/service/dynamodb/dynamodbattribute"
 )
 
 const (
 	partitionKey = "Email"
-	sortKey      = "UpdateDate"
 )
 
 func tableStruct(tableName string) *dynamodb.CreateTableInput {
@@ -21,19 +23,11 @@ func tableStruct(tableName string) *dynamodb.CreateTableInput {
 				AttributeName: aws.String(partitionKey),
 				AttributeType: aws.String("S"),
 			},
-			{
-				AttributeName: aws.String(sortKey),
-				AttributeType: aws.String("S"),
-			},
 		},
 		KeySchema: []*dynamodb.KeySchemaElement{
 			{
 				AttributeName: aws.String(partitionKey),
 				KeyType:       aws.String("HASH"),
-			},
-			{
-				AttributeName: aws.String(sortKey),
-				KeyType:       aws.String("RANGE"),
 			},
 		},
 		BillingMode: aws.String(dynamodb.BillingModePayPerRequest), // ondemand
@@ -81,15 +75,12 @@ func validTable(db dynamodb.DynamoDB, tableName string) bool {
 	return isTableName
 }
 
-func hasItem(db dynamodb.DynamoDB, tableName string, primarykey string, sortkey string) (bool, error) {
+func hasItem(db dynamodb.DynamoDB, tableName string, primarykey string) (bool, error) {
 	input := &dynamodb.GetItemInput{
 		TableName: aws.String(tableName),
 		Key: map[string]*dynamodb.AttributeValue{
 			partitionKey: {
 				S: aws.String(primarykey),
-			},
-			sortKey: {
-				S: aws.String(sortkey),
 			},
 		},
 	}
@@ -101,4 +92,47 @@ func hasItem(db dynamodb.DynamoDB, tableName string, primarykey string, sortkey 
 		return false, nil
 	}
 	return true, nil
+}
+
+// AddUser 는 사용자를 추가하는 함수이다.
+func AddUser(db dynamodb.DynamoDB) error {
+	hasBool, err := hasItem(db, *flagTable, *flagEmail)
+	if err != nil {
+		return err
+	}
+	if hasBool {
+		return errors.New("The data already exists. Can not add data")
+	}
+	item := User{
+		Email:        *flagEmail,
+		UpdateDate:   *flagUpdateDate,
+		NameKor:      *flagNameKor,
+		NameEng:      *flagNameEng,
+		Jobcode:      *flagJobcode,
+		Bank:         *flagBank,
+		BankAccount:  *flagBankAccount,
+		SharesNum:    *flagShareNum,
+		CostHourly:   *flagCostHourly,
+		CostWeekly:   *flagCostWeekly,
+		CostMonthly:  *flagCostMonthly,
+		CostYearly:   *flagCostYearly,
+		MonetaryUnit: *flagMonetaryUnit,
+		Working:      *flagWorking,
+		Projects:     strings.Split(*flagProjects, ","),
+	}
+
+	dynamodbJSON, err := dynamodbattribute.MarshalMap(item)
+	if err != nil {
+		return err
+	}
+
+	data := &dynamodb.PutItemInput{
+		Item:      dynamodbJSON,
+		TableName: aws.String(*flagTable),
+	}
+	_, err = db.PutItem(data)
+	if err != nil {
+		return err
+	}
+	return nil
 }
