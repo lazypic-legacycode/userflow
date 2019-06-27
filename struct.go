@@ -2,21 +2,21 @@ package main
 
 // User 는 사용자 정보를 다루는 자료구조이다.
 type User struct {
-	NameKor       string   // 이름
-	NameEng       string   // 영문이름
-	Email         string   // Lazypic 이메일
-	EmailPersonal string   // 개인메일
-	Jobcode       int      // 업종코드
-	Bankname      string   // 은행명
-	BankAccount   string   // 계좌번호
-	SharesNum     int64    // 주식량(지분)
-	CostHourly    int64    // 시급
-	CostWeekly    int64    // 주급
-	CostMonthly   int64    // 월급
-	CostYearly    int64    // 연봉
-	MonetaryUnit  string   // 단위. KRW
-	Working       bool     // 상태
-	Projects      []string // 참여 프로젝트
+	Email        string   // Lazypic 이메일. partition key
+	UpdateDate   string   // 업데이트 날짜. sort key
+	NameKor      string   // 이름
+	NameEng      string   // 영문이름
+	Jobcode      int      // 업종코드
+	Bank         string   // 은행명
+	BankAccount  string   // 계좌번호
+	SharesNum    int64    // 주식량(지분)
+	CostHourly   int64    // 시급
+	CostWeekly   int64    // 주급
+	CostMonthly  int64    // 월급
+	CostYearly   int64    // 연봉
+	MonetaryUnit string   // 단위. KRW
+	Working      bool     // 상태
+	Projects     []string // 참여 프로젝트
 }
 
 // Lazypic 에서 프리랜서로 활용할 때 견적서에 등록해야할 업종코드는 아래와 같다.
