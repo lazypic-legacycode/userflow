@@ -1,10 +1,12 @@
 package main
 
 import (
+	"errors"
 	"flag"
 	"fmt"
 	"log"
 	"os"
+	"os/user"
 	"time"
 
 	"github.com/aws/aws-sdk-go/aws"
@@ -86,7 +88,11 @@ func main() {
 			os.Exit(1)
 		}
 	} else if *flagRm && *flagEmail != "" {
-		err := RmUser(*db)
+		user, err := user.Current()
+		if user.Username != "root" {
+			log.Fatal(errors.New("사용자를 삭제하기 위해서는 root 권한이 필요합니다"))
+		}
+		err = RmUser(*db)
 		if err != nil {
 			fmt.Fprintf(os.Stderr, "%v\n", err)
 			os.Exit(1)

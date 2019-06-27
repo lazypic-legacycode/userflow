@@ -20,7 +20,7 @@ $ userflow -set -email woong@lazypic.org -projects circle,csi
 User 삭제
 
 ```bash
-$ userflow -rm -email woong@lazypic.org
+$ sudo userflow -rm -email woong@lazypic.org
 ```
 
 User 검색
