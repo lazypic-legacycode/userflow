@@ -24,8 +24,9 @@ var (
 	flagSet = flag.Bool("set", false, "user update mode")
 	flagRm  = flag.Bool("rm", false, "user remove mode")
 
-	// sort key
-	flagUpdateDate = flag.String("createdate", now.Format(time.RFC3339), "item create date")
+	// date
+	flagHelp       = flag.Bool("help", false, "print help")
+	flagUpdateDate = flag.String("updatedate", now.Format(time.RFC3339), "user update date")
 
 	// attributes
 	flagNameKor      = flag.String("namekor", "", "korean user name")
@@ -68,22 +69,24 @@ func main() {
 		fmt.Println("Please try again in one minute.")
 		os.Exit(0)
 	}
-	if *flagAdd {
+	if *flagHelp {
+		flag.Usage()
+	}
+	if *flagAdd && *flagEmail != "" {
 		err := AddUser(*db)
 		if err != nil {
 			fmt.Fprintf(os.Stderr, "%v\n", err)
 			os.Exit(1)
 		}
-	} else if *flagSet {
+	} else if *flagSet && *flagEmail != "" {
 		err := SetUser(*db)
 		if err != nil {
 			fmt.Fprintf(os.Stderr, "%v\n", err)
 			os.Exit(1)
 		}
-	} else if *flagRm {
+	} else if *flagRm && *flagEmail != "" {
 		fmt.Println("remove user mode")
 	} else {
-		flag.Usage()
+		fmt.Println("print user list")
 	}
-
 }
