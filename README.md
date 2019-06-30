@@ -1,4 +1,4 @@
-# userflow
+![userflow](figures/risalogo.svg)
 
 Lazypic 사용자 데이터 입니다.
 
