@@ -248,7 +248,18 @@ func GetUsers(db dynamodb.DynamoDB, word string) error {
 		expression.Name("Working"),
 		expression.Name("Projects"),
 	)
-	expr, err := expression.NewBuilder().WithProjection(proj).Build()
+	filt1 := expression.Name("Email").Contains(word)
+	filt2 := expression.Name("NameKor").Contains(word)
+	filt3 := expression.Name("NameEng").Contains(word)
+	filt4 := expression.Name("Projects").Contains(word)
+
+	expr, err := expression.NewBuilder().
+		WithFilter(filt1).
+		WithFilter(filt2).
+		WithFilter(filt3).
+		WithFilter(filt4).
+		WithProjection(proj).
+		Build()
 	if err != nil {
 		return err
 	}
@@ -269,9 +280,7 @@ func GetUsers(db dynamodb.DynamoDB, word string) error {
 		if err != nil {
 			return err
 		}
-		if strings.Contains(u.String(), *flagSearchword) {
-			fmt.Println(u)
-		}
+		fmt.Println(u)
 	}
 	return nil
 }
