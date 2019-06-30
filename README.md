@@ -29,6 +29,40 @@ User 검색
 $ userflow -searchword [검색어]
 ```
 
+### 인수
+
+#### DB셋팅
+
+- region: 기본값 "ap-northeast-2", AWS 리전명
+- profile: 기본값 "lazypic", AWS Credentials profile 이름
+- table: 기본값 "userflow", AWS Dynamodb tablbe 이름
+
+#### 모드
+- add: add mode on
+- set: set mode on
+- rm: rm mode on
+
+#### 속성
+- namekor: 한글이름
+- nameeng: 영문이름
+- email: 이메일
+- jobcode: 업종코드
+- bank: 은행명
+- bankaccount: 계좌번호
+- sharenum: 주식수
+- costhourly: 시간당임금
+- costweekly: 주당임금
+- costmonthly: 월급여
+- costyearly: 연봉
+- monetaryunit", 기본값 "KRW", 화폐단위
+- working: 기본값 false, 현재 일하는 상태인지 체크
+- projects: 기본값 "", 참여중인 프로젝트
+- searchword: 기본값 "", 검색어
+
+#### 기타
+- help: 도움말 출력
+- updatedate: 사용자 업데이트 날짜를 임의로 변경시 사용
+
 ### AWS DB권한 설정
 AWS DB접근 권한을 설정할 계정에 아래 권한을 부여합니다.
 
