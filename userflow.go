@@ -49,7 +49,7 @@ var (
 )
 
 func main() {
-	log.SetPrefix("assetflow: ")
+	log.SetPrefix("userflow: ")
 	log.SetFlags(0)
 	flag.Usage = usage
 	flag.Parse()
