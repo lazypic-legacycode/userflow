@@ -45,7 +45,7 @@ var (
 	flagMonetaryUnit = flag.String("monetaryunit", "KRW", "monetary unit")
 	flagWorking      = flag.Bool("working", false, "is working?")
 	flagProjects     = flag.String("projects", "", "projectname")
-	flagSearchword   = flag.String("searchword", "", "searchword")
+	flagSearchword   = flag.String("search", "", "search word")
 )
 
 func main() {

@@ -254,10 +254,10 @@ func GetUsers(db dynamodb.DynamoDB, word string) error {
 	filt4 := expression.Name("Projects").Contains(word)
 
 	expr, err := expression.NewBuilder().
-		WithFilter(filt1).
-		WithFilter(filt2).
-		WithFilter(filt3).
-		WithFilter(filt4).
+		WithFilter(filt1.
+			Or(filt2).
+			Or(filt3).
+			Or(filt4)).
 		WithProjection(proj).
 		Build()
 	if err != nil {
