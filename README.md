@@ -1,6 +1,6 @@
 ![userflow](figures/risalogo.svg)
 
-Lazypic 사용자 데이터 입니다.
+Lazypic 유저 매니징툴 입니다.
 
 ### 사용법
 사용자 관리는 고유한 키가되는 Email을 기준으로 관리합니다.
