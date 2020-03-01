@@ -1,6 +1,7 @@
 ![userflow](figures/risalogo.svg)
 
-Lazypic 유저 매니징툴 입니다.
+- Lazypic 유저 매니징툴 입니다.
+- Lazypic 내부툴 PlanA에 합병되었습니다. 사용되지 않습니다.
 
 ### 사용법
 사용자 관리는 고유한 키가되는 Email을 기준으로 관리합니다.
